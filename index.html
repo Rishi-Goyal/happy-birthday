@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, My Love</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --color-cream: #FDFBF7;
+            --color-sage: #94A684;
+            --color-terracotta: #D68C78;
+            --color-dusty-pink: #E8C4C4;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-cream);
+            color: #333;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        h1, h2, h3, .serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .gradient-bg {
+            background: radial-gradient(circle at top left, #fdfbf7 0%, #f5efe6 100%);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 32px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.03);
+        }
+
+        .music-visualizer .bar {
+            width: 3px;
+            background: var(--color-terracotta);
+            margin: 0 2px;
+            border-radius: 10px;
+            animation: bounce 0.8s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { height: 4px; opacity: 0.5; }
+            50% { height: 28px; opacity: 1; }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .photo-card {
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+        .photo-card:hover {
+            transform: scale(1.05) rotate(0deg) translateY(-10px);
+            z-index: 10;
+        }
+
+        .grain {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .glow {
+            filter: drop-shadow(0 0 15px rgba(214, 140, 120, 0.3));
+        }
+    </style>
+</head>
+<body class="gradient-bg">
+    <div class="grain"></div>
+
+    <!-- Audio Element -->
+    <audio id="birthdaySong" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex flex-col items-center justify-center relative px-6 overflow-hidden">
+        <div class="absolute top-20 left-[10%] w-64 h-64 bg-[#E8C4C4] rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+        <div class="absolute bottom-20 right-[10%] w-80 h-80 bg-[#94A684] rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style="animation-delay: 1s"></div>
+        
+        <div class="z-10 text-center">
+            <span class="text-[10px] tracking-[0.5em] uppercase mb-6 block text-gray-400 fade-in">"I've known you for ages"</span>
+            <h1 class="text-7xl md:text-9xl mb-8 text-[#3D3D3D] leading-tight fade-in">
+                Happy <br/>
+                <span class="italic serif text-[#D68C78] glow">Birthday</span>
+            </h1>
+            <p class="text-base md:text-lg text-gray-500 max-w-sm mx-auto mb-12 fade-in leading-relaxed">
+                A digital keepsake for my favorite person. Turn your volume up for a little surprise.
+            </p>
+            
+            <button onclick="startExperience()" class="group relative px-10 py-5 bg-[#3D3D3D] text-white rounded-full overflow-hidden transition-all hover:scale-105 hover:shadow-2xl fade-in">
+                <span class="relative z-10">Start the Experience ✨</span>
+                <div class="absolute inset-0 bg-[#D68C78] transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+            </button>
+        </div>
+
+        <div class="absolute bottom-12 flex flex-col items-center fade-in opacity-50">
+            <div class="w-px h-16 bg-gradient-to-b from-gray-300 to-transparent"></div>
+        </div>
+    </section>
+
+    <!-- Aesthetic Music Player -->
+    <section class="py-24 px-6">
+        <div class="max-w-xl mx-auto glass-card p-10 fade-in">
+            <div class="flex flex-col items-center">
+                <div class="w-56 h-56 rounded-full overflow-hidden mb-8 shadow-2xl border-8 border-white/50 relative group">
+                    <!-- Updated to use local harry.jpg -->
+                    <img src="harry.jpg" 
+                         alt="Harry Styles Vibe" 
+                         onerror="this.src='https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&q=80&w=800'"
+                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div id="playingOverlay" class="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 transition-opacity duration-500">
+                        <div class="text-white text-3xl">✦</div>
+                    </div>
+                </div>
+
+                <div class="text-center mb-8">
+                    <h3 class="text-2xl mb-1">American Girls</h3>
+                    <p class="text-[10px] uppercase tracking-[0.3em] text-[#D68C78] font-semibold">Harry Styles — Kiss All The Time. Disco, Occasionally.</p>
+                </div>
+
+                <!-- Visualizer -->
+                <div class="music-visualizer flex items-end h-10 mb-8">
+                    <div class="bar" style="animation-delay: 0.1s"></div>
+                    <div class="bar" style="animation-delay: 0.3s"></div>
+                    <div class="bar" style="animation-delay: 0.5s"></div>
+                    <div class="bar" style="animation-delay: 0.2s"></div>
+                    <div class="bar" style="animation-delay: 0.4s"></div>
+                    <div class="bar" style="animation-delay: 0.1s"></div>
+                    <div class="bar" style="animation-delay: 0.3s"></div>
+                </div>
+
+                <div class="w-full space-y-4">
+                    <div class="flex items-center gap-4">
+                        <span id="timestamp" class="text-[10px] font-mono text-gray-400">0:00</span>
+                        <div class="flex-1 h-1 bg-gray-100 rounded-full relative overflow-hidden">
+                            <div id="progressBar" class="absolute left-0 top-0 h-full w-0 bg-[#D68C78] transition-all duration-100"></div>
+                        </div>
+                        <span class="text-[10px] font-mono text-gray-400">0:10</span>
+                    </div>
+
+                    <div class="flex justify-center gap-8 items-center">
+                        <button onclick="toggleMusic()" class="w-16 h-16 rounded-full bg-white shadow-xl flex items-center justify-center text-[#3D3D3D] hover:text-[#D68C78] transition-colors">
+                            <svg id="playIcon" class="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Message Section -->
+    <section class="py-32 bg-white/30">
+        <div class="max-w-2xl mx-auto px-8 text-center">
+            <span class="text-4xl mb-6 block">✉️</span>
+            <h2 class="text-3xl md:text-4xl mb-12 italic serif">"I've known you for ages..."</h2>
+            <div class="space-y-8 text-lg text-gray-600 leading-relaxed fade-in font-light">
+                <p>There's a reason this song reminds me of us. It's the way time feels different when we're together—like we've known each other forever, even in the brand new moments.</p>
+                <p>You are my favorite song, my favorite view, and my favorite reason to celebrate. I wanted this digital space to be a reflection of the beauty you bring into my life every day.</p>
+                <p class="serif text-3xl text-[#3D3D3D] pt-8">I love you, always.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery -->
+    <section class="py-32 px-6 max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div class="photo-card bg-white p-5 shadow-2xl -rotate-2 fade-in">
+                <div class="overflow-hidden mb-4 aspect-[4/5]">
+                    <img src="https://images.unsplash.com/photo-1516483642775-82415675402a?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover">
+                </div>
+                <p class="text-center serif italic text-gray-500">The way you laugh</p>
+            </div>
+            <div class="photo-card bg-white p-5 shadow-2xl rotate-1 fade-in" style="animation-delay: 0.2s">
+                <div class="overflow-hidden mb-4 aspect-[4/5]">
+                    <img src="https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover">
+                </div>
+                <p class="text-center serif italic text-gray-500">Every sunset with you</p>
+            </div>
+            <div class="photo-card bg-white p-5 shadow-2xl rotate-3 fade-in" style="animation-delay: 0.4s">
+                <div class="overflow-hidden mb-4 aspect-[4/5]">
+                    <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover">
+                </div>
+                <p class="text-center serif italic text-gray-500">Ages and ages</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-24 text-center">
+        <div class="w-12 h-px bg-gray-200 mx-auto mb-8"></div>
+        <p class="text-[10px] tracking-[0.4em] uppercase text-gray-400">Happy Birthday My Love • 2024</p>
+    </footer>
+
+    <script>
+        const audio = document.getElementById('birthdaySong');
+        const playIcon = document.getElementById('playIcon');
+        const progressBar = document.getElementById('progressBar');
+        const timestamp = document.getElementById('timestamp');
+        const bars = document.querySelectorAll('.bar');
+        const overlay = document.getElementById('playingOverlay');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        function celebrate() {
+            const defaults = { origin: { y: 0.8 }, colors: ['#94A684', '#D68C78', '#E8C4C4', '#FDFBF7'] };
+            confetti({ ...defaults, particleCount: 150, spread: 70, scalar: 0.8 });
+        }
+
+        function startExperience() {
+            celebrate();
+            window.scrollTo({ top: window.innerHeight * 0.8, behavior: 'smooth' });
+            if (audio.paused) {
+                audio.play();
+                updateUI(true);
+            }
+        }
+
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play().catch(e => console.log("Audio play blocked by browser. Click 'Start Experience' first."));
+                updateUI(true);
+                celebrate();
+            } else {
+                audio.pause();
+                updateUI(false);
+            }
+        }
+
+        function updateUI(playing) {
+            playIcon.innerHTML = playing ? 
+                '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>' : 
+                '<path d="M8 5v14l11-7z"></path>';
+            
+            overlay.style.opacity = playing ? '1' : '0';
+            bars.forEach(bar => bar.style.animationPlayState = playing ? 'running' : 'paused');
+        }
+
+        audio.ontimeupdate = () => {
+            if (audio.duration) {
+                const percentage = (audio.currentTime / audio.duration) * 100;
+                progressBar.style.width = percentage + '%';
+                const secs = Math.floor(audio.currentTime);
+                timestamp.innerText = `0:${secs < 10 ? '0' : ''}${secs}`;
+            }
+        };
+
+        bars.forEach(bar => bar.style.animationPlayState = 'paused');
+    </script>
+</body>
+</html>
